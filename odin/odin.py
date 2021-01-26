@@ -1,8 +1,7 @@
 import yaml
 import os
+import shutil
 import networkx as nx
-from .node import *
-from .edge import *
 
 
 class Odin(object):
@@ -59,11 +58,91 @@ class Odin(object):
         if 'dirs' in self.graph['node'][key].keys():
             return list(self.graph['node'][key]['dirs'])
         return []
+    def get_extensions(self,key):
+        """
+        Returns valid file extensions associated with key
+        """
+        if key not in self.get_node_properties():
+            raise KeyError("key not found")
+        if 'extensions' in self.graph['node'][key].keys():
+            return list(self.graph['node'][key]['extensions'])
+        return []
 
-    def new_node(self,name,**kwargs):
+    def _check_property_key(self,key):
+        """
+        Ensures that key belongs to a valid graph property
+        """
+        key = str(key)
+        if key not in self.get_node_properties():
+            raise RuntimeError("Invalid property key")
+
+    def _check_property(self,**kwargs):
+        """
+        Checks property=value pair against format in configuration file
+        """
+        print(kwargs)
+        if len(kwargs) != 1:
+            raise RuntimeError("Invalid number of arguments")
+        key = list(kwargs.keys())[0]
+        self._check_property_key(key)
+        val = os.path.abspath(kwargs[key])
+        if not os.path.isfile(val):
+            raise FileNotFoundError
+        filename, extension = os.path.splitext(val)
+        if extension not in self.get_extensions(key):
+            raise RuntimeError("Invalid file extension")
+        return key,val
+
+    def new_node(self,name=None,description=None,**kwargs):
         """
         Adds a new node to the odin graph
         """
+        if name is None and description is None and len(kwargs) == 0:
+            return None
+        
+
+        nodedict = dict()
+        print(kwargs)
+        
+        if len(kwargs) != 0:
+            # check property format and get key/value pair
+            key,filename= self._check_property(**kwargs)
+        
+            # get directory where file lives
+            dirname = os.path.dirname(filename)
+            
+            # get base file.ext name
+            basename = os.path.basename(filename)
+
+            # copy file to default directory if dirname is not in config file
+            if dirname not in self.get_directories(key):
+                defaultdir = self.get_directories(key)[0]
+                newfilename = os.path.join(defaultdir,basename)
+                shutil.copy2(filename,newfilename)
+                filename = newfilename
+
+            # add object to node dictionary
+            nodedict[key] = filename
+
+            # set name to base filename if no name is given
+            if name is None:
+                # get base filename 
+                name, = os.path.splitext(basename)
+
+        if name is not None:
+            propdict['name'] = str(name)
+
+        if description is not None:
+            propdict['description'] = str(description)
+
+        # add the node to odin's tree
+        self.dg.add_node(self._node_count+1,**propdict)
+        self._node_count += 1
+
+
+
+        print(kwargs)
+        print("New node!")
         return None
     def get_node(self,**kwargs):
         """

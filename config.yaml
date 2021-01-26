@@ -3,31 +3,32 @@ odin:
 # Node properties
 node:
   note:
-    types: 
+    extensions: 
     - md
     dirs:
     - /Users/noahgreen/Documents/Notes
   reference:
-    types: pdf
+    extensions: 
+    - pdf
     dirs:
     - /Users/noahgreen/Documents/References
   bibliography:
-    types:
-      - bib
+    extensions:
+    - bib
     dirs:
     - /Users/noahgreen/Documents/References
   data:
-    types:
-      - root
-      - csv
+    extensions:
+    - root
+    - csv
     dirs:
     - /Users/noahgreen/Documents/Data
   image:
     dirs:
-      - /Users/noahgreen/Documents/Images
-    types:
-      - jpg
-      - jpeg
-      - png
+    - /Users/noahgreen/Documents/Images
+    extensions:
+    - jpg
+    - jpeg
+    - png
 
 

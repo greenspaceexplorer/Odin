@@ -1,0 +1,13 @@
+node:
+  note:
+    dirs:
+    - /Users/noahgreen/Documents/Notes
+    extensions:
+    - md
+  reference:
+    dirs:
+    - /Users/noahgreen/Documents/References
+    extensions:
+    - pdf
+odin:
+  dir: /Users/noahgreen/Documents/.odin
